@@ -140,7 +140,7 @@
      <h1>Seekr</h1>
      <div class="form-group ">
        <input type="text" class="form-control" placeholder="Enter Job Page URL" id="UserName">
-     <button class="loginBtn loginBtn--google">
+     <button id="googleButton" class="loginBtn loginBtn--google">
   Login with Google
 </button>
 
@@ -163,13 +163,14 @@
 
       var authorizeButton = document.getElementById('authorize-button');
       var signoutButton = document.getElementById('signout-button');
-
+      var googleButton = document.getElementById('googleButton');
       /**
        *  On load, called to load the auth2 library and API client library.
        */
       function handleClientLoad() {
         gapi.load('client:auth2', initClient);
       }
+      
 
       /**
        *  Initializes the API client library and sets up sign-in state
@@ -188,7 +189,17 @@
           updateSigninStatus(gapi.auth2.getAuthInstance().isSignedIn.get());
           authorizeButton.onclick = handleAuthClick;
           signoutButton.onclick = handleSignoutClick;
+          googleButton.onclick = handleGoogleButton;
         });
+      }
+      function handleGoogleButton() {
+        if(!gapi.auth2.getAuthInstance().isSignedIn.get()) {
+          document.getElementById('googleButton').innerHTML = 'Sign out      '
+          handleAuthClick();
+        } else {
+          document.getElementById('googleButton').innerHTML = 'Login with Google'
+          handleSignoutClick();
+        }
       }
 
       /**
@@ -197,11 +208,14 @@
        */
       function updateSigninStatus(isSignedIn) {
         if (isSignedIn) {
+          console.log('insieeeeeee')
+          document.getElementById('googleButton').innerHTML = 'Sign out      '
           authorizeButton.style.display = 'none';
-          signoutButton.style.display = 'block';
+          signoutButton.style.display = 'none';
           listLabels();
         } else {
-          authorizeButton.style.display = 'block';
+          document.getElementById('googleButton').innerHTML = 'Login with Google'
+          authorizeButton.style.display = 'none';
           signoutButton.style.display = 'none';
         }
       }
