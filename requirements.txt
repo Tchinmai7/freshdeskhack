@@ -1,2 +1,7 @@
 beautifulsoup4
 dryscrape
+pdfminer
+python-dateutil
+numpy
+dateparser
+urllib3
