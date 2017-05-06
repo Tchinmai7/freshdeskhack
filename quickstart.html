@@ -290,7 +290,7 @@
           addLabel()
       }
       function addLabel() {
-        const res = { "labels" : ["a","b"]}
+      //  const res = { "labels" : ["a","b"]}
        fetch('https://reqres.in/api/users').then((res) => {
          for(i = 0 ; i < res.labels.length ; i++) {
              gapi.client.gmail.users.labels.create({
