@@ -2,13 +2,14 @@ from bs4 import BeautifulSoup
 import dryscrape
 import re
 import string
-import rake
+import freshdeskhack.rake as rake
 import json
 from operator import itemgetter, attrgetter, methodcaller
 def get_jobs(url):
     ret = { }
     jobs = []
-    rake_object = rake.Rake("SmartStoplist.txt", 3, 2, 1)
+    rake_object = rake.Rake("/root/freshack/Jobscraper/freshdeskhack/SmartStoplist.txt", 3, 2, 1)
+    dryscrape.start_xvfb()
     session = dryscrape.Session()
     session.visit(url)
     html_page = session.body()
@@ -28,10 +29,11 @@ def get_jobs(url):
         keywords = rake_object.run(job_desc)
         words = []
         for word in keywords:
-            words.append(word[0])
-
+            if "year" not in word[0]:
+                words.append(word[0])
+            else:
+                job["experience"] = word[0]
         job["keywords"] = words
         jobs.append(job)
     ret["jobs"] = jobs
-    print(json.dumps(ret))
-    return ret
+    return json.dumps(ret)
