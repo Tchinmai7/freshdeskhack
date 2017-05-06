@@ -33,8 +33,5 @@ def get_jobs(url):
         job["keywords"] = words
         jobs.append(job)
     ret["jobs"] = jobs
-    return ret
-
-if __name__ == "__main__":
-    ret = get_jobs("https://freshdesk.com/company/careers")
     print(json.dumps(ret))
+    return ret
