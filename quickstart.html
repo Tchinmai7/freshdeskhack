@@ -161,12 +161,21 @@
       }).then((res) => {
         //var id = res[res.length-1].body.attachmentId
        // console.log('id => ')
+     //  console.log('++++++++++++++++++++++++++++')
+      // console.log(dataURItoBlob(res.result.data))
          var base64=(res.result.data).replace(/_/g, '/'); //Replace this characters 
- base64=base64.replace(/-/g, '+');
+         base64=base64.replace(/-/g, '+');
  var base64Fixed = fixBase64(base64);
- var blob = new Blob([base64Fixed], { type: "application/pdf" } ); //set your file type!
- console.log('print blob')
+ var blob = new Blob([base64Fixed], { type: "application/pdf" } );
+  //set your file type!
+  var reader = new FileReader();
+reader.onload = function() {
+    console.log(reader.result);
+}
+reader.readAsText(blob)
+ console.log('++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++')
  console.log(blob)
+ console.log('+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++')
  //saveAs(blob,"name of file"); //Using FileSaver library 
       })
             }
@@ -192,6 +201,22 @@
       view[i] = binary.charCodeAt(i);
 
  return view;
+}
+
+function dataURItoBlob(dataURI) {
+    var byteString = atob(dataURI.split(',')[1]);
+
+    var mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0]
+
+    var ab = new ArrayBuffer(byteString.length);
+    var ia = new Uint8Array(ab);
+    for (var i = 0; i < byteString.length; i++) {
+        ia[i] = byteString.charCodeAt(i);
+    }
+
+   return URL.createObjectURL(new Blob([ab] , {type:'text/plain'}))
+   // bb.append(ab);
+  //  return bb.getBlob(mimeString);
 }
       
 
