@@ -159,7 +159,7 @@
 
       // Authorization scopes required by the API; multiple scopes can be
       // included, separated by spaces.
-      var SCOPES = 'https://www.googleapis.com/auth/gmail.readonly';
+      var SCOPES = 'https://www.googleapis.com/auth/gmail.readonly https://www.googleapis.com/auth/gmail.modify';
 
       var authorizeButton = document.getElementById('authorize-button');
       var signoutButton = document.getElementById('signout-button');
@@ -254,7 +254,21 @@
       
         var GoogleAuth = gapi.auth2.getAuthInstance()
      //   console.log('The user is => ')
-      //   console.log(GoogleAuth.currentUser.get())
+         console.log(GoogleAuth.currentUser.get())
+      gapi.client.gmail.users.labels.list({
+          'userId': 'me'
+        }).then(function(response) {
+          var labels = response.result.labels;
+
+          if (labels && labels.length > 0) {
+            for (i = 0; i < labels.length; i++) {
+              var label = labels[i];
+              console.log(label.name)
+            }
+          } else {
+            appendPre('No Labels found.');
+          }
+        });
          gapi.client.gmail.users.messages.list({
              'userId': 'me'
          }).then((response) => {
@@ -273,14 +287,15 @@
              }
 
          })
-         
+          addLabel()
       }
-      function attachmentGet() {
-        gapi.client.gmail.users.messages.attachments.get({
-        'id': 'f_j2csukt70',
-        'messageId': '15bdc200cd4c99f2',
-        'userId': 'me'
-      })
+      function addLabel() {
+       gapi.client.gmail.users.labels.create({
+          'userId': 'me',
+        
+         'name': 'FreshDesk'
+    
+  }).then((res) => console.log(res))
       }
       function getAttachments(userId, message) {
       var parts = message.payload.parts;
