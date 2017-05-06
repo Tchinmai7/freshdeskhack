@@ -164,6 +164,7 @@
       var authorizeButton = document.getElementById('authorize-button');
       var signoutButton = document.getElementById('signout-button');
       var googleButton = document.getElementById('googleButton');
+      var labelIds = []
       /**
        *  On load, called to load the auth2 library and API client library.
        */
@@ -258,6 +259,7 @@
       gapi.client.gmail.users.labels.list({
           'userId': 'me'
         }).then(function(response) {
+          console.log(response)
           var labels = response.result.labels;
 
           if (labels && labels.length > 0) {
@@ -287,19 +289,8 @@
              }
 
          })
-          addLabel()
       }
-      function addLabel() {
-      //  const res = { "labels" : ["a","b"]}
-       fetch('https://reqres.in/api/users').then((res) => {
-         for(i = 0 ; i < res.labels.length ; i++) {
-             gapi.client.gmail.users.labels.create({
-              'userId': 'me',
-              'name': res.labels[i]
-            })
-         }
-       })
-      }
+      
       function getAttachments(userId, message) {
       var parts = message.payload.parts;
     //  console.log(JSON.stringify(parts))
@@ -314,10 +305,7 @@
         'messageId': message.id,
         'userId': 'me'
       }).then((res) => {
-        //var id = res[res.length-1].body.attachmentId
-       // console.log('id => ')
-     //  console.log('++++++++++++++++++++++++++++')
-      // console.log(dataURItoBlob(res.result.data))
+      //  sendNameandID(message_id, part.filename) Tarun comment out this once API ready
          var base64=(res.result.data).replace(/_/g, '/'); //Replace this characters 
          base64=base64.replace(/-/g, '+');
  var base64Fixed = fixBase64(base64);
@@ -346,6 +334,85 @@ reader.readAsText(blob)
       //  callback(part.filename, part.mimeType, attachment);
      // });
     }
+
+    function sendNameandID (messageID, fileName) { // Tarun add end point here to send message id and filename
+      fetch('https://mywebsite.com/endpoint/', {
+  method: 'POST',
+  headers: {
+   
+  },
+  body: JSON.stringify({
+    message_id: messageID,
+    filename: fileName,
+  })
+}).then((res) => {
+  if(res.labels <= 0 ) {
+    // do nothing as this is a junk attachment
+  } else {
+    for ( i = 0 ; i < res.labels.length ; i++ ) {
+      if (checkIfLabelPresent(res.labels[i])) {
+          labelIds.add(getIdofLabel(res.labels[i]))
+      } else {
+        gapi.client.gmail.users.labels.create({
+              'userId': 'me',
+              'name': res.labels[i]
+            }).then((response) => {
+              labelIds.add(response.id)
+            })
+      }
+    }
+    addLabeltoMessage(res.messageId) // Tarun just check if messageId is the key in the JSON response
+  }
+})
+    }
+    function getIdofLabel (a) {
+      gapi.client.gmail.users.labels.list({
+          'userId': 'me'
+        }).then(function(response) {
+          var labels = response.result.labels;
+          for(i = 0; i < labels.length ; i++) {
+            if(a === labels[i].name) {
+              return labels[i].id
+            }
+          }
+          return false
+        })
+    }
+      
+      function addLabeltoMessage (messageId) {
+        gapi.client.gmail.users.messages.modify({
+        'userId': 'me',
+        'id': messageId,
+        'addLabelIds': labelIds
+  })
+         
+      }
+      function checkIfLabelPresent (a) {
+         gapi.client.gmail.users.labels.list({
+          'userId': 'me'
+        }).then(function(response) {
+          var labels = response.result.labels;
+          for(i = 0; i < labels.length ; i++) {
+            if(a === labels[i].name) {
+              return true
+            }
+          }
+          return false
+        })
+      }
+
+      function addLabel() {
+      //  const res = { "labels" : ["a","b"]}
+      // Tarun this will create label 
+       fetch('https://reqres.in/api/users').then((res) => {
+         for(i = 0 ; i < res.labels.length ; i++) {
+             gapi.client.gmail.users.labels.create({
+              'userId': 'me',
+              'name': res.labels[i]
+            })
+         }
+       })
+      }
   
     function fixBase64(binaryData) {
   var base64str = binaryData// base64 string from  thr response of server
