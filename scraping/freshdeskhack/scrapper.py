@@ -8,8 +8,10 @@ from operator import itemgetter, attrgetter, methodcaller
 def get_jobs(url):
     ret = { }
     jobs = []
-    rake_object = rake.Rake("/root/freshack/Jobscraper/freshdeskhack/SmartStoplist.txt", 3, 2, 1)
-    dryscrape.start_xvfb()
+    #TODO: change path to absolute path
+    rake_object = rake.Rake("/Users/schinmai/freshdeskhack/scraping/freshdeskhack/SmartStoplist.txt", 3, 2, 1)
+    #TODO: Uncomment on remote machines
+    #dryscrape.start_xvfb()
     session = dryscrape.Session()
     session.visit(url)
     html_page = session.body()
