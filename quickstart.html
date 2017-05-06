@@ -116,8 +116,8 @@
           }
         });
         var GoogleAuth = gapi.auth2.getAuthInstance()
-        console.log('The user is => ')
-         console.log(GoogleAuth.currentUser.get())
+     //   console.log('The user is => ')
+      //   console.log(GoogleAuth.currentUser.get())
          gapi.client.gmail.users.messages.list({
              'userId': 'me'
          }).then((response) => {
@@ -143,7 +143,7 @@
         'id': 'f_j2csukt70',
         'messageId': '15bdc200cd4c99f2',
         'userId': 'me'
-      }).then((res) => console.log())
+      })
       }
       function getAttachments(userId, message) {
       var parts = message.payload.parts;
@@ -167,15 +167,18 @@
          base64=base64.replace(/-/g, '+');
  var base64Fixed = fixBase64(base64);
  var blob = new Blob([base64Fixed], { type: "application/pdf" } );
+// saveAs(blob,"sidhanth.pdf")
   //set your file type!
   var reader = new FileReader();
 reader.onload = function() {
+  console.log('++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++')
     console.log(reader.result);
+    console.log('++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++')
 }
 reader.readAsText(blob)
- console.log('++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++')
- console.log(blob)
- console.log('+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++')
+// console.log('++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++')
+// console.log(blob)
+// console.log('+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++')
  //saveAs(blob,"name of file"); //Using FileSaver library 
       })
             }
