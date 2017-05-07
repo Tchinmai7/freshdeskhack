@@ -96,7 +96,7 @@ def get_experience(filename):
         return workex
 
 
-def get_labels(json_filename,pdf_filename):
+def get_labels(json_filename,pdf_filename,message_id):
     current_work_ex=get_experience(pdf_filename)
     print 'current work ex',current_work_ex
     partial = ''
@@ -122,8 +122,11 @@ def get_labels(json_filename,pdf_filename):
     resume_keywords=[]
     job_weightage={}
     final_labels=[]
+
     for i in words:
+        print i
         resume_keywords.append(i.lower())
+
     with open(json_filename) as json_data:
         min_work_ex=0
         d = json.load(json_data)
@@ -142,19 +145,20 @@ def get_labels(json_filename,pdf_filename):
             print 'flag',flag
             print 'current work ex',current_work_ex
             print 'min work ex',min_work_ex
-            if flag == 0 or ( flag == 1 and current_work_ex > min_work_ex):
+            if flag == 0 or ( flag == 1 and current_work_ex > min_work_ex ):
                 print 'true'
                 for keyword in sample:
                     cnt=1
+                    print 'kw',keyword
                     if keyword.lower() in resume_keywords:
                         if keyword.lower() in ['ios','testing','qa','designer','android','customer','marketing','sales']:
                             cnt=3
                         else:
                             cnt=1
-                    if job["title"] not in job_weightage:
-                        job_weightage[job["title"]]=cnt
-                    else:
-                        job_weightage[job["title"]]=job_weightage[job["title"]]+cnt
+                        if job["title"] not in job_weightage:
+                            job_weightage[job["title"]]=cnt
+                        else:
+                            job_weightage[job["title"]]=job_weightage[job["title"]]+cnt
     print '------------',len(job_weightage)
     if len(job_weightage)==0:
         ret={}
@@ -175,11 +179,14 @@ def get_labels(json_filename,pdf_filename):
         for label in final_labels:
             print label
         ret={}
+        ret["messageId"] = message_id
         ret["labels"]=final_labels
         return ret
 
-def parsePDF(pdffile):
+def parsePDF( pdffile, message_id):
     http = urllib3.PoolManager()
+    print pdffile
+    print message_id
     #url = 'http://139.59.57.104:8000/test/?url=https://freshdesk.com/company/careers/'
     #r = http.request('GET', url, preload_content=False)
     #connection_pool = urllib3.PoolManager()
@@ -187,11 +194,5 @@ def parsePDF(pdffile):
     #f = open('sample2.json', 'wb')
     #f.write(resp.data)
     #f.close()
-    label=get_labels('/Users/sangeethaswaminathan/Desktop/sample2.json',pdffile)
-    return json.dumps(label)
-
-#get_labels('sample2.json','/Users/sangeethaswaminathan/Desktop/resume.pdf')
-#get_labels('/Users/sangeethaswaminathan/Desktop/op.json','/Users/sangeethaswaminathan/Desktop/Sanjeev_Resume(16).pdf')
-#get_labels('/Users/sangeethaswaminathan/Desktop/op.json','/Users/sangeethaswaminathan/Desktop/Tarun_Resume1.pdf')
-
-#parsePDF('/Users/sangeethaswaminathan/Desktop/ResumeSample/5.pdf')
+    label=get_labels('/Users/schinmai/sample2.json',pdffile, message_id)
+    return label

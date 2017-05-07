@@ -6,3 +6,4 @@ numpy
 dateparser
 urllib3
 django
+django-cors-headers
